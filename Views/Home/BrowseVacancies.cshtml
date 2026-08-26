@@ -1,0 +1,76 @@
+﻿@model AltriumRecruitmentSystem.Models.BrowseVacanciesViewModel
+
+@{
+    ViewData["Title"] = "Browse Vacancies";
+    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
+    var initials = string.Join("", fullName.Split(' ').Where(n => n.Length > 0).Select(n => n[0]));
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a asp-controller="Home" asp-action="ApplicantDashboard" class="sidebar-link">Dashboard</a>
+        <a asp-controller="Home" asp-action="CompleteProfile" class="sidebar-link">Profile</a>
+        <a asp-controller="Home" asp-action="UploadCV" class="sidebar-link">Upload CV</a>
+        <a href="#" class="sidebar-link active">Vacancies</a>
+        <a asp-controller="Home" asp-action="MyApplications" class="sidebar-link">Applications</a>
+        <a href="#" class="sidebar-link">Notifications</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-welcome">
+            <h1>Browse Vacancies</h1>
+
+            <div class="dashboard-user">
+                <div class="dashboard-avatar">@initials</div>
+                @fullName · Applicant
+            </div>
+        </div>
+
+        <form asp-controller="Home" asp-action="BrowseVacancies" method="get" class="vacancy-search-bar">
+            <input type="text" name="search" value="@Model.SearchTerm" placeholder="Search by title or keyword...">
+            <select name="department">
+                <option>All Roles</option>
+                <option selected="@(Model.DepartmentFilter == "Engineering")">Engineering</option>
+                <option selected="@(Model.DepartmentFilter == "Business")">Business</option>
+                <option selected="@(Model.DepartmentFilter == "Design")">Design</option>
+            </select>
+            <select name="location">
+                <option>All Locations</option>
+                <option selected="@(Model.LocationFilter == "Colombo, Sri Lanka")">Colombo, Sri Lanka</option>
+                <option selected="@(Model.LocationFilter == "Remote")">Remote</option>
+            </select>
+        </form>
+
+        <div class="vacancy-list">
+
+            @if (!Model.Vacancies.Any())
+            {
+                <p style="color:var(--grey);">No vacancies found.</p>
+            }
+
+            @foreach (var vacancy in Model.Vacancies)
+            {
+                <div class="vacancy-row">
+                    <div class="vacancy-row-info">
+                        <div class="vacancy-row-icon">@vacancy.JobTitle.Substring(0, Math.Min(2, vacancy.JobTitle.Length)).ToUpper()</div>
+                        <div>
+                            <div class="vacancy-row-title">@vacancy.JobTitle</div>
+                            <div class="vacancy-row-meta">
+                                <span>@vacancy.Department</span>
+                                <span>@vacancy.Location</span>
+                                <span>Posted @vacancy.PostedOn.ToString("dd MMM yyyy")</span>
+                            </div>
+                        </div>
+                    </div>
+                    <a asp-controller="Home" asp-action="VacancyDetails" asp-route-id="@vacancy.VacancyId" class="vacancy-view-button">View Details</a>
+                </div>
+            }
+
+        </div>
+
+    </main>
+
+</div>

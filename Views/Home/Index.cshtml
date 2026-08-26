@@ -1,0 +1,142 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="hero-section">
+
+    <div class="hero-content">
+        <h1>Find Your<br />Dream Job</h1>
+
+        <p>
+            Discover existing career opportunities<br />
+            and take the next step in your career.
+        </p>
+    </div>
+
+    <div class="hero-image">
+        <div class="hero-glow"></div>
+
+        <div class="hero-symbol">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div class="hero-label">
+            CAREERS
+        </div>
+    </div>
+
+</div>
+
+<br>
+<br />
+<form asp-controller="Home" asp-action="Login" method="get" class="job-search">
+
+    <input type="text" name="search" placeholder="Search job title or keywords..." />
+
+    <select disabled>
+        <option>All Categories</option>
+        <option>Engineering and Technology</option>
+        <option>Product and Analysis</option>
+        <option>People & Operations</option>
+        <option>Marketing and Sales</option>
+    </select>
+
+    <select disabled>
+        <option>All Locations</option>
+        <option>Colombo, Sri Lanka</option>
+        <option>Kandy, Sri Lanka</option>
+        <option>Galle, Sri Lanka</option>
+        <option>Remote</option>
+    </select>
+
+    <button type="submit">
+        Search
+    </button>
+
+</form>
+
+
+
+<section class="featured-jobs">
+
+    <div class="section-header">
+        <h2>Featured Jobs</h2>
+
+        <a asp-controller="Home" asp-action="Login">
+            View All Jobs →
+        </a>
+    </div>
+
+    <div class="job-cards">
+
+        
+        <div class="job-card">
+
+            <div class="job-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="16 18 22 12 16 6"></polyline>
+                    <polyline points="8 6 2 12 8 18"></polyline>
+                </svg>
+            </div>
+
+            <h3>Software Engineer</h3>
+
+            <p>Engineering and Technology</p>
+            <p>Colombo, Sri Lanka</p>
+
+            <a asp-controller="Home" asp-action="Login" class="job-button">
+                View Details
+            </a>
+
+        </div>
+
+
+        
+        <div class="job-card">
+
+            <div class="job-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </div>
+
+            <h3>Business Analyst</h3>
+
+            <p>Marketing and Sales</p>
+            <p>Colombo, Sri Lanka</p>
+
+            <a asp-controller="Home" asp-action="Login" class="job-button">
+                View Details
+            </a>
+
+        </div>
+
+
+        
+        <div class="job-card">
+
+            <div class="job-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+            </div>
+
+            <h3>Product Manager</h3>
+
+            <p>Product and Analysis</p>
+            <p>Remote</p>
+
+            <a asp-controller="Home" asp-action="Login" class="job-button">
+                View Details
+            </a>
+
+        </div>
+
+    </div>
+
+</section>

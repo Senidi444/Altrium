@@ -1,0 +1,91 @@
+﻿@model AltriumRecruitmentSystem.Models.ApplicantsManagementViewModel
+
+@{
+    ViewData["Title"] = "Applicants Management";
+
+    string StatusClass(AltriumRecruitmentSystem.Models.ApplicationStatus status) => status switch
+    {
+        AltriumRecruitmentSystem.Models.ApplicationStatus.Applied => "status-applied",
+        AltriumRecruitmentSystem.Models.ApplicationStatus.UnderReview => "status-review",
+        AltriumRecruitmentSystem.Models.ApplicationStatus.Shortlisted => "status-shortlisted",
+        AltriumRecruitmentSystem.Models.ApplicationStatus.Rejected => "status-rejected",
+        _ => "status-applied"
+    };
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a asp-controller="Home" asp-action="RecruiterDashboard" class="sidebar-link">Dashboard</a>
+        <a asp-controller="Home" asp-action="VacancyManagement" class="sidebar-link">Vacancies</a>
+        <a href="#" class="sidebar-link active">Applications</a>
+        <a asp-controller="Home" asp-action="ScheduleInterview" class="sidebar-link">Interviews</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="table-header-row">
+            <h1>Applications</h1>
+        </div>
+
+        <form asp-controller="Home" asp-action="ApplicantsManagement" method="get" class="applicants-filter-bar">
+            <select name="vacancyId">
+                <option value="">All Vacancies</option>
+                @foreach (var v in Model.AllVacancies)
+                {
+                    <option value="@v.VacancyId" selected="@(Model.VacancyFilter == v.VacancyId)">@v.JobTitle</option>
+                }
+            </select>
+            <input type="text" name="search" value="@Model.SearchTerm" placeholder="Search by name or email...">
+        </form>
+
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>Applicant</th>
+                    <th>Job Title</th>
+                    <th>Applied On</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Applications.Any())
+                {
+                    <tr>
+                        <td colspan="5" style="color:var(--grey);">No applications found.</td>
+                    </tr>
+                }
+                @foreach (var app in Model.Applications)
+                {
+                    <tr>
+                        <td>
+                            @app.User.FirstName @app.User.LastName
+                            <div class="table-link-actions" style="margin-top:4px;">
+                                <a asp-controller="Home" asp-action="ViewApplicantProfile" asp-route-userId="@app.UserId">View Profile</a>
+                            </div>
+                        </td>
+                        <td>@app.Vacancy.JobTitle</td>
+                        <td>@app.AppliedOn.ToString("dd MMM yyyy")</td>
+                        <td><span class="status-pill @StatusClass(app.Status)">@app.Status</span></td>
+                        <td>
+                            <div class="decision-actions">
+                                <form asp-controller="Home" asp-action="ShortlistApplication" method="post">
+                                    <input type="hidden" name="id" value="@app.ApplicationId" />
+                                    <button type="submit" class="shortlist-icon">✓</button>
+                                </form>
+                                <form asp-controller="Home" asp-action="RejectApplication" method="post">
+                                    <input type="hidden" name="id" value="@app.ApplicationId" />
+                                    <button type="submit" class="reject-icon">✕</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </main>
+
+</div>

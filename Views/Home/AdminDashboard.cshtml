@@ -1,0 +1,103 @@
+﻿@model List<AltriumRecruitmentSystem.Models.User>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
+    var initials = string.Join("", fullName.Split(' ').Where(n => n.Length > 0).Select(n => n[0]));
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a href="#" class="sidebar-link active">Dashboard</a>
+        <a href="#" class="sidebar-link">Users</a>
+        <a href="#" class="sidebar-link">Recruiters</a>
+        <a href="#" class="sidebar-link">Reports</a>
+        <a href="#" class="sidebar-link">Settings</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-welcome">
+            <h1>Admin Dashboard</h1>
+
+            <div class="dashboard-user">
+                <div class="dashboard-avatar">@initials</div>
+                @fullName · Administrator
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.TotalUsers</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.TotalRecruiters</div>
+                <div class="stat-label">Recruiters</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.TotalApplicants</div>
+                <div class="stat-label">Applicants</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.ActiveVacancies</div>
+                <div class="stat-label">Active Vacancies</div>
+            </div>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Recent Registered Users</h2>
+
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Registered On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4" style="color:var(--grey);">No users registered yet.</td>
+                        </tr>
+                    }
+                    @foreach (var u in Model)
+                    {
+                        var roleClass = u.Role == AltriumRecruitmentSystem.Models.UserRole.Recruiter ? "role-recruiter" : "role-applicant";
+                        <tr>
+                            <td>@u.FirstName @u.LastName</td>
+                            <td>@u.Email</td>
+                            <td><span class="role-badge @roleClass">@u.Role</span></td>
+                            <td>@u.RegisteredOn.ToString("dd MMM yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="dashboard-section">
+            <h2>Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="#" class="action-card">
+                    <div class="action-icon">👥</div>
+                    Manage Users
+                </a>
+                <a href="#" class="action-card">
+                    <div class="action-icon">🧑‍💼</div>
+                    Manage Recruiters
+                </a>
+                <a href="#" class="action-card">
+                    <div class="action-icon">📊</div>
+                    View Reports
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+</div>

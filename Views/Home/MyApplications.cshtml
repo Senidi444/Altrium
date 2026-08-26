@@ -1,0 +1,69 @@
+﻿@model List<AltriumRecruitmentSystem.Models.JobApplication>
+
+@{
+    ViewData["Title"] = "My Applications";
+    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
+    var initials = string.Join("", fullName.Split(' ').Where(n => n.Length > 0).Select(n => n[0]));
+
+    string StatusClass(AltriumRecruitmentSystem.Models.ApplicationStatus status) => status switch
+    {
+        AltriumRecruitmentSystem.Models.ApplicationStatus.Applied => "status-applied",
+        AltriumRecruitmentSystem.Models.ApplicationStatus.UnderReview => "status-review",
+        AltriumRecruitmentSystem.Models.ApplicationStatus.Shortlisted => "status-shortlisted",
+        AltriumRecruitmentSystem.Models.ApplicationStatus.Rejected => "status-rejected",
+        _ => "status-applied"
+    };
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a asp-controller="Home" asp-action="ApplicantDashboard" class="sidebar-link">Dashboard</a>
+        <a asp-controller="Home" asp-action="CompleteProfile" class="sidebar-link">Profile</a>
+        <a asp-controller="Home" asp-action="UploadCV" class="sidebar-link">Upload CV</a>
+        <a asp-controller="Home" asp-action="BrowseVacancies" class="sidebar-link">Vacancies</a>
+        <a href="#" class="sidebar-link active">Applications</a>
+        <a href="#" class="sidebar-link">Notifications</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-welcome">
+            <h1>My Applications</h1>
+
+            <div class="dashboard-user">
+                <div class="dashboard-avatar">@initials</div>
+                @fullName · Applicant
+            </div>
+        </div>
+
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Applied On</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" style="color:var(--grey);">You haven't applied to any vacancies yet.</td>
+                    </tr>
+                }
+                @foreach (var app in Model)
+                {
+                    <tr>
+                        <td>@app.Vacancy.JobTitle</td>
+                        <td>@app.AppliedOn.ToString("dd MMM yyyy")</td>
+                        <td><span class="status-pill @StatusClass(app.Status)">@app.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    </main>
+
+</div>

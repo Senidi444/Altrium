@@ -1,0 +1,74 @@
+﻿@model AltriumRecruitmentSystem.Models.ScheduleInterviewViewModel
+
+@{
+    ViewData["Title"] = "Schedule Interview";
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a asp-controller="Home" asp-action="RecruiterDashboard" class="sidebar-link">Dashboard</a>
+        <a asp-controller="Home" asp-action="VacancyManagement" class="sidebar-link">Vacancies</a>
+        <a asp-controller="Home" asp-action="ApplicantsManagement" class="sidebar-link">Applications</a>
+        <a href="#" class="sidebar-link active">Interviews</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="table-header-row">
+            <h1>Schedule Interview</h1>
+        </div>
+
+        <div class="profile-card" style="max-width:600px;">
+
+            <form asp-controller="Home" asp-action="ScheduleInterview" method="post">
+
+                <div class="form-group">
+                    <label>Applicant / Vacancy</label>
+                    <select asp-for="ApplicationId">
+                        @if (!Model.ApplicationOptions.Any())
+                        {
+                            <option value="">No shortlisted applicants yet</option>
+                        }
+                        @foreach (var app in Model.ApplicationOptions)
+                        {
+                            <option value="@app.ApplicationId">@app.User.FirstName @app.User.LastName — @app.Vacancy.JobTitle</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Interview Date</label>
+                    <input asp-for="InterviewDate" type="date">
+                </div>
+
+                <div class="form-group">
+                    <label>Interview Time</label>
+                    <input asp-for="InterviewTime" type="time">
+                </div>
+
+                <div class="form-group">
+                    <label>Google Meet Link</label>
+                    <input asp-for="GoogleMeetLink" placeholder="https://meet.google.com/abc-defg-hij">
+                </div>
+
+                <div class="form-group">
+                    <label>Message (Optional)</label>
+                    <textarea asp-for="Message" placeholder="Please join the interview on time."></textarea>
+                </div>
+
+                <div class="checkbox-row">
+                    <input asp-for="NotifyApplicant" type="checkbox" id="notifyApplicant">
+                    <label for="notifyApplicant">Send Notification to Applicant</label>
+                </div>
+
+                <button type="submit" class="schedule-button">Schedule Interview</button>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>

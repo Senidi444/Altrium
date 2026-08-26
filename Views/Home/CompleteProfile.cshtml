@@ -1,0 +1,154 @@
+﻿@model AltriumRecruitmentSystem.Models.CompleteProfilePageViewModel
+
+@{
+    ViewData["Title"] = "Complete Profile";
+    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
+    var initials = string.Join("", fullName.Split(' ').Where(n => n.Length > 0).Select(n => n[0]));
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a asp-controller="Home" asp-action="ApplicantDashboard" class="sidebar-link">Dashboard</a>
+        <a href="#" class="sidebar-link active">Profile</a>
+        <a asp-controller="Home" asp-action="UploadCV" class="sidebar-link">Upload CV</a>
+        <a asp-controller="Home" asp-action="BrowseVacancies" class="sidebar-link">Vacancies</a>
+        <a asp-controller="Home" asp-action="MyApplications" class="sidebar-link">Applications</a>
+        <a href="#" class="sidebar-link">Notifications</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-welcome">
+            <h1>Personal Information</h1>
+
+            <div class="dashboard-user">
+                <div class="dashboard-avatar">@initials</div>
+                @fullName · Applicant
+            </div>
+        </div>
+
+        <form asp-controller="Home" asp-action="SaveProfile" method="post">
+
+            <div class="profile-card">
+                <h2>Personal Information</h2>
+
+                <div class="profile-grid">
+
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input asp-for="PersonalInfo.FirstName">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input asp-for="PersonalInfo.LastName">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input asp-for="PersonalInfo.Phone">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input asp-for="PersonalInfo.Email" readonly style="opacity:0.6;">
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Address</label>
+                        <input asp-for="PersonalInfo.Address">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Country</label>
+                        <input asp-for="PersonalInfo.Country">
+                    </div>
+
+                </div>
+
+                <button class="save-profile-button" type="submit" style="margin-top:20px;">Save Profile</button>
+            </div>
+
+        </form>
+
+        <div class="profile-card">
+            <h2>Education</h2>
+
+            @foreach (var edu in Model.Educations)
+            {
+                <div class="entry-item">
+                    <div>
+                        <div class="entry-title">@edu.Title</div>
+                        <div class="entry-subtitle">@edu.Institution · @edu.Year</div>
+                    </div>
+                    <div class="entry-actions">
+                        <form asp-controller="Home" asp-action="DeleteEducation" method="post">
+                            <input type="hidden" name="id" value="@edu.EducationId" />
+                            <button type="submit">🗑</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <form asp-controller="Home" asp-action="AddEducation" method="post" style="margin-top:16px;">
+                <div class="profile-grid">
+                    <div class="form-group">
+                        <label>Qualification</label>
+                        <input name="Title" placeholder="e.g. BSc in Computer Science" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Institution</label>
+                        <input name="Institution" placeholder="e.g. University of Colombo" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input name="Year" placeholder="e.g. 2021" required>
+                    </div>
+                </div>
+                <button type="submit" class="add-button" style="margin-top:10px;">+ Add Education</button>
+            </form>
+        </div>
+
+        <div class="profile-card">
+            <h2>Experience</h2>
+
+            @foreach (var exp in Model.Experiences)
+            {
+                <div class="entry-item">
+                    <div>
+                        <div class="entry-title">@exp.Title</div>
+                        <div class="entry-subtitle">@exp.Company · @exp.Duration</div>
+                    </div>
+                    <div class="entry-actions">
+                        <form asp-controller="Home" asp-action="DeleteExperience" method="post">
+                            <input type="hidden" name="id" value="@exp.ExperienceId" />
+                            <button type="submit">🗑</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <form asp-controller="Home" asp-action="AddExperience" method="post" style="margin-top:16px;">
+                <div class="profile-grid">
+                    <div class="form-group">
+                        <label>Role</label>
+                        <input name="Title" placeholder="e.g. Software Intern" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Company</label>
+                        <input name="Company" placeholder="e.g. ABC Company" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <input name="Duration" placeholder="e.g. 6 Months" required>
+                    </div>
+                </div>
+                <button type="submit" class="add-button" style="margin-top:10px;">+ Add Experience</button>
+            </form>
+        </div>
+
+    </main>
+
+</div>

@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Management Dashboard";
+    var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
+    var initials = string.Join("", fullName.Split(' ').Where(n => n.Length > 0).Select(n => n[0]));
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a href="#" class="sidebar-link active">Dashboard</a>
+        <a href="#" class="sidebar-link">Reports</a>
+        <a href="#" class="sidebar-link">Analytics</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <div class="dashboard-welcome">
+            <h1>Recruitment Overview</h1>
+
+            <div class="dashboard-user">
+                <div class="dashboard-avatar">@initials</div>
+                @fullName · Management
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.TotalVacancies</div>
+                <div class="stat-label">Total Vacancies</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.TotalApplications</div>
+                <div class="stat-label">Total Applications</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.ShortlistedCount</div>
+                <div class="stat-label">Shortlisted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">@ViewBag.InterviewsCount</div>
+                <div class="stat-label">Interviews</div>
+            </div>
+        </div>
+
+        <div class="dashboard-section" style="margin-top:30px;">
+            <p style="color:var(--grey);font-size:14px;">
+                Detailed charts and recruiter leaderboards will be added once more data is available.
+            </p>
+        </div>
+
+    </main>
+
+</div>

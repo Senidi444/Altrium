@@ -1,0 +1,66 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AltriumRecruitmentSystem</title>
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/AltriumRecruitmentSystem.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-container">
+
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                    <svg class="logo-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <polygon points="50,4 93,27 93,73 50,96 7,73 7,27" fill="#F5C400" />
+                        <path d="M 50 28 L 68 68 L 58 68 L 54 58 L 46 58 L 42 68 L 32 68 Z M 50 42 L 45 54 L 55 54 Z" fill="#0A0A0A" />
+                        <circle cx="72" cy="20" r="5" fill="#F5C400" />
+                    </svg>
+                    Altrium
+                </a>
+
+                <div class="nav-links">
+
+                    <a asp-controller="Home" asp-action="Index">Home</a>
+
+                    <a asp-controller="Home" asp-action="Login">Jobs</a>
+
+                    <a asp-controller="Home" asp-action="AboutUs">About Us</a>
+
+                    <a asp-controller="Home" asp-action="Contact">Contact</a>
+
+                    <a asp-controller="Home" asp-action="Register" class="nav-button">
+                        Register
+                    </a>
+
+                    <a asp-controller="Home" asp-action="Login" class="nav-button outline">
+                        Login
+                    </a>
+
+                </div>
+
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - AltriumRecruitmentSystem - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

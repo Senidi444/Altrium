@@ -1,0 +1,96 @@
+﻿@model AltriumRecruitmentSystem.Models.User
+
+@{
+    ViewData["Title"] = "Applicant Profile";
+}
+
+<div class="dashboard-layout">
+
+    <aside class="dashboard-sidebar">
+        <a asp-controller="Home" asp-action="RecruiterDashboard" class="sidebar-link">Dashboard</a>
+        <a asp-controller="Home" asp-action="VacancyManagement" class="sidebar-link">Vacancies</a>
+        <a asp-controller="Home" asp-action="ApplicantsManagement" class="sidebar-link active">Applications</a>
+        <a asp-controller="Home" asp-action="ScheduleInterview" class="sidebar-link">Interviews</a>
+        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+    </aside>
+
+    <main class="dashboard-main">
+
+        <a asp-controller="Home" asp-action="ApplicantsManagement" class="back-link">← Back to Applications</a>
+
+        <div class="profile-card">
+            <h2>Personal Information</h2>
+
+            <div class="profile-grid">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input value="@Model.FirstName @Model.LastName" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input value="@Model.Email" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input value="@(Model.Phone ?? "Not provided")" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <input value="@(Model.Country ?? "Not provided")" readonly>
+                </div>
+                <div class="form-group full-width">
+                    <label>Address</label>
+                    <input value="@(Model.Address ?? "Not provided")" readonly>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <h2>Education</h2>
+            @if (!Model.EducationEntries.Any())
+            {
+                <p style="color:var(--grey);font-size:14px;">No education entries provided.</p>
+            }
+            @foreach (var edu in Model.EducationEntries)
+            {
+                <div class="entry-item">
+                    <div>
+                        <div class="entry-title">@edu.Title</div>
+                        <div class="entry-subtitle">@edu.Institution · @edu.Year</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="profile-card">
+            <h2>Experience</h2>
+            @if (!Model.ExperienceEntries.Any())
+            {
+                <p style="color:var(--grey);font-size:14px;">No experience entries provided.</p>
+            }
+            @foreach (var exp in Model.ExperienceEntries)
+            {
+                <div class="entry-item">
+                    <div>
+                        <div class="entry-title">@exp.Title</div>
+                        <div class="entry-subtitle">@exp.Company · @exp.Duration</div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="profile-card">
+            <h2>CV</h2>
+            @if (!string.IsNullOrEmpty(Model.CvFilePath))
+            {
+                <a href="@Model.CvFilePath" target="_blank" class="job-button">📄 View @Model.CvFileName</a>
+            }
+            else
+            {
+                <p style="color:var(--grey);font-size:14px;">No CV uploaded.</p>
+            }
+        </div>
+
+    </main>
+
+</div>
