@@ -1,0 +1,89 @@
+﻿@model IEnumerable<AltriumRecruitmentSystem.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container mt-4">
+
+    <div class="mb-4">
+        <h2>Notifications</h2>
+        <p class="text-muted">
+            Stay updated about your applications and interviews.
+        </p>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card p-4 text-center">
+
+            <h4>No notifications</h4>
+
+            <p class="text-muted mb-0">
+                You don't have any notifications yet.
+            </p>
+
+        </div>
+    }
+    else
+    {
+        foreach (var notification in Model)
+        {
+            <div class="card mb-3 @(notification.IsRead ? "" : "border-warning")">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-start">
+
+                        <div>
+
+                            @if (!notification.IsRead)
+                            {
+                                <span class="badge bg-warning text-dark mb-2">
+                                    New
+                                </span>
+                            }
+
+                            <h5 class="card-title">
+                                @notification.NotificationType
+                            </h5>
+
+                            <p class="card-text">
+                                @notification.Message
+                            </p>
+
+                            <small class="text-muted">
+                                @notification.CreateDate.ToString("dd MMM yyyy, hh:mm tt")
+                            </small>
+
+                        </div>
+
+                        @if (!notification.IsRead)
+                        {
+                            <form asp-controller="Home"
+                                  asp-action="MarkNotificationAsRead"
+                                  method="post">
+
+                                <input type="hidden"
+                                       name="id"
+                                       value="@notification.NotificationId" />
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-dark">
+
+                                    Mark as Read
+
+                                </button>
+
+                            </form>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+    }
+
+</div>

@@ -1,0 +1,549 @@
+﻿@model AltriumRecruitmentSystem.Models.ManagementReportViewModel
+
+@{
+    ViewData["Title"] = "Hiring Report";
+}
+
+<style>
+
+    .report-page {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .report-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+        .report-header h1 {
+            margin-bottom: 6px;
+        }
+
+    .report-date {
+        color: var(--grey);
+        font-size: 14px;
+    }
+
+    .report-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .report-back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 16px;
+        border: 1px solid #555;
+        border-radius: 8px;
+        color: white;
+        text-decoration: none;
+        transition: 0.2s ease;
+    }
+
+        .report-back-btn:hover {
+            background: #222;
+            color: white;
+        }
+
+    .report-section {
+        margin-bottom: 30px;
+    }
+
+        .report-section h2 {
+            margin-bottom: 15px;
+        }
+
+    .report-stat-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+    }
+
+    .report-stat-card {
+        background: #111;
+        border: 1px solid #292929;
+        border-radius: 12px;
+        padding: 20px;
+        min-height: 105px;
+    }
+
+    .report-stat-number {
+        font-size: 30px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .report-stat-label {
+        color: var(--grey);
+        font-size: 14px;
+    }
+
+    .report-table-wrapper {
+        overflow-x: auto;
+        background: #111;
+        border-radius: 12px;
+        border: 1px solid #292929;
+    }
+
+    .report-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .report-table th,
+        .report-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #292929;
+        }
+
+        .report-table th {
+            color: var(--grey);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-table tr:last-child td {
+            border-bottom: none;
+        }
+
+    .report-status {
+        display: inline-flex;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .report-status-open {
+        background: #198754;
+        color: white;
+    }
+
+    .report-status-cancelled {
+        background: #dc3545;
+        color: white;
+    }
+
+    .report-empty {
+        padding: 25px;
+        text-align: center;
+        color: var(--grey);
+    }
+
+    @@media (max-width: 900px) {
+
+        .report-stat-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 600px) {
+
+        .report-header {
+            flex-direction: column;
+        }
+
+        .report-stat-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .report-actions {
+            width: 100%;
+        }
+
+        .report-back-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+</style>
+
+
+<div class="dashboard-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="dashboard-sidebar">
+
+        <a asp-controller="Home"
+           asp-action="ManagementDashboard"
+           class="sidebar-link">
+
+            Dashboard
+
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="ManagementReport"
+           class="sidebar-link active">
+
+            Reports
+
+        </a>
+
+        <form asp-controller="Home"
+              asp-action="Logout"
+              method="post">
+
+            <button type="submit"
+                    class="sidebar-link"
+                    style="
+                background:none;
+                border:0;
+                width:100%;
+                text-align:left;
+                ">
+
+                Logout
+
+            </button>
+
+        </form>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="dashboard-main">
+
+        <div class="report-page">
+
+
+            <!-- ================= HEADER ================= -->
+
+            <div class="report-header">
+
+                <div>
+
+                    <h1>
+                        Hiring Report
+                    </h1>
+
+                    <div class="report-date">
+
+                        Generated on
+                        @Model.GeneratedOn.ToString("dd MMM yyyy, hh:mm tt")
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-actions">
+
+                    <a asp-controller="Home"
+                       asp-action="ManagementDashboard"
+                       class="report-back-btn">
+
+                        ← Dashboard
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= RECRUITMENT OVERVIEW ================= -->
+
+            <div class="report-section">
+
+                <h2>
+                    Recruitment Overview
+                </h2>
+
+
+                <div class="report-stat-grid">
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.TotalVacancies
+                        </div>
+
+                        <div class="report-stat-label">
+                            Total Vacancies
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.OpenVacancies
+                        </div>
+
+                        <div class="report-stat-label">
+                            Open Vacancies
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.CancelledVacancies
+                        </div>
+
+                        <div class="report-stat-label">
+                            Cancelled Vacancies
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.TotalApplications
+                        </div>
+
+                        <div class="report-stat-label">
+                            Total Applications
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= APPLICATION BREAKDOWN ================= -->
+
+            <div class="report-section">
+
+                <h2>
+                    Application Breakdown
+                </h2>
+
+
+                <div class="report-stat-grid">
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.AppliedApplications
+                        </div>
+
+                        <div class="report-stat-label">
+                            Applied
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.UnderReviewApplications
+                        </div>
+
+                        <div class="report-stat-label">
+                            Under Review
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.ShortlistedApplications
+                        </div>
+
+                        <div class="report-stat-label">
+                            Shortlisted
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.RejectedApplications
+                        </div>
+
+                        <div class="report-stat-label">
+                            Rejected
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= INTERVIEW SUMMARY ================= -->
+
+            <div class="report-section">
+
+                <h2>
+                    Interview Summary
+                </h2>
+
+
+                <div class="report-stat-grid">
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.TotalInterviews
+                        </div>
+
+                        <div class="report-stat-label">
+                            Total Interviews
+                        </div>
+
+                    </div>
+
+
+                    <div class="report-stat-card">
+
+                        <div class="report-stat-number">
+                            @Model.UpcomingInterviews
+                        </div>
+
+                        <div class="report-stat-label">
+                            Upcoming Interviews
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= VACANCY PERFORMANCE ================= -->
+
+            <div class="report-section">
+
+                <h2>
+                    Vacancy Performance
+                </h2>
+
+
+                <div class="report-table-wrapper">
+
+                    @if (!Model.VacancyPerformance.Any())
+                    {
+                        <div class="report-empty">
+
+                            No vacancy data is available.
+
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="report-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Job Title
+                                    </th>
+
+                                    <th>
+                                        Department
+                                    </th>
+
+                                    <th>
+                                        Location
+                                    </th>
+
+                                    <th>
+                                        Applications
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @foreach (var vacancy
+                                    in Model.VacancyPerformance)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                @vacancy.JobTitle
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            @vacancy.Department
+                                        </td>
+
+                                        <td>
+                                            @vacancy.Location
+                                        </td>
+
+                                        <td>
+                                            @vacancy.ApplicationCount
+                                        </td>
+
+                                        <td>
+
+                                            @if (vacancy.Status == "Open")
+                                            {
+                                                <span class="report-status report-status-open">
+
+                                                    Open
+
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="report-status report-status-cancelled">
+
+                                                    @vacancy.Status
+
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+                    }
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </main>
+
+</div>

@@ -1,0 +1,346 @@
+﻿@model AltriumRecruitmentSystem.Models.InterviewFeedbackViewModel
+
+@{
+    ViewData["Title"] = "Interview Feedback";
+}
+
+<div class="dashboard-layout">
+
+    <!-- ===================== SIDEBAR ===================== -->
+
+    <aside class="dashboard-sidebar">
+        
+        <a asp-controller="Home"
+           asp-action="RecruiterDashboard"
+           class="sidebar-link">
+            Dashboard
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="VacancyManagement"
+           class="sidebar-link">
+            Vacancies
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="ApplicantsManagement"
+           class="sidebar-link">
+            Applications
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="ScheduleInterview"
+           class="sidebar-link active">
+            Interviews
+        </a>
+
+        <form asp-controller="Home"
+              asp-action="Logout"
+              method="post">
+
+            <button type="submit"
+                    class="sidebar-link"
+                    style="
+                background:none;
+                border:0;
+                width:100%;
+                text-align:left;
+                ">
+                Logout
+            </button>
+
+        </form>
+
+    </aside>
+
+
+    <!-- ===================== MAIN ===================== -->
+
+    <main class="dashboard-main">
+
+        <div class="table-header-row">
+
+            <div>
+
+                <h1>
+                    Interview Feedback
+                </h1>
+
+                <p style="color:var(--grey);">
+                    Record the outcome and interviewer feedback
+                    for this interview.
+                </p>
+
+            </div>
+
+            <a asp-controller="Home"
+               asp-action="ScheduleInterview"
+               class="btn btn-outline-light">
+
+                ← Back to Interviews
+
+            </a>
+
+        </div>
+
+
+        <!-- ===================== INTERVIEW DETAILS ===================== -->
+
+        <div class="dashboard-section"
+             style="margin-top:25px;">
+
+            <h2>
+                Interview Details
+            </h2>
+
+            <div class="stats-grid"
+                 style="margin-top:20px;">
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Applicant
+                    </div>
+
+                    <div style="
+                        font-size:20px;
+                        font-weight:600;
+                        margin-top:8px;
+                        ">
+
+                        @Model.ApplicantName
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Position
+                    </div>
+
+                    <div style="
+                        font-size:20px;
+                        font-weight:600;
+                        margin-top:8px;
+                        ">
+
+                        @Model.JobTitle
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Interview Date
+                    </div>
+
+                    <div style="
+                        font-size:20px;
+                        font-weight:600;
+                        margin-top:8px;
+                        ">
+
+                        @Model.InterviewDate.ToString("dd MMM yyyy")
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-label">
+                        Interview Time
+                    </div>
+
+                    <div style="
+                        font-size:20px;
+                        font-weight:600;
+                        margin-top:8px;
+                        ">
+
+                        @Model.InterviewTime.ToString(@"hh\:mm")
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            @if (!string.IsNullOrWhiteSpace(Model.GoogleMeetLink))
+            {
+                <div style="
+                    margin-top:25px;
+                    padding:15px;
+                    border:1px solid #333;
+                    border-radius:10px;
+                    ">
+
+                    <strong>
+                        Google Meet:
+                    </strong>
+
+                    <a href="@Model.GoogleMeetLink"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       style="
+                        margin-left:10px;
+                        color:#f5c400;
+                        ">
+
+                        Open Meeting
+
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- ===================== FEEDBACK FORM ===================== -->
+
+        <div class="dashboard-section"
+             style="margin-top:25px;">
+
+            <h2>
+                Interview Outcome
+            </h2>
+
+            <form asp-controller="Home"
+                  asp-action="InterviewFeedback"
+                  method="post"
+                  style="margin-top:25px;">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       asp-for="InterviewId" />
+
+                <input type="hidden"
+                       asp-for="ApplicationId" />
+
+                <input type="hidden"
+                       asp-for="ApplicantName" />
+
+                <input type="hidden"
+                       asp-for="JobTitle" />
+
+                <input type="hidden"
+                       asp-for="InterviewDate" />
+
+                <input type="hidden"
+                       asp-for="InterviewTime" />
+
+                <input type="hidden"
+                       asp-for="GoogleMeetLink" />
+
+
+                <div class="mb-4">
+
+                    <label asp-for="Outcome"
+                           class="form-label">
+
+                        Interview Outcome
+
+                    </label>
+
+                    <select asp-for="Outcome"
+                            class="form-select">
+
+                        <option value="">
+                            -- Select Outcome --
+                        </option>
+
+                        <option value="Recommended">
+                            Recommended
+                        </option>
+
+                        <option value="Not Recommended">
+                            Not Recommended
+                        </option>
+
+                        <option value="Further Review">
+                            Further Review
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="Outcome"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <div class="mb-4">
+
+                    <label asp-for="InterviewerFeedback"
+                           class="form-label">
+
+                        Interviewer Feedback
+
+                    </label>
+
+                    <textarea asp-for="InterviewerFeedback"
+                              class="form-control"
+                              rows="7"
+                              placeholder="Enter your observations, strengths, concerns and overall interview assessment...">
+                    </textarea>
+
+                    <span asp-validation-for="InterviewerFeedback"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="alert alert-danger">
+
+                        Please correct the errors above
+                        before submitting the feedback.
+
+                    </div>
+                }
+
+
+                <div style="
+                    display:flex;
+                    gap:12px;
+                    flex-wrap:wrap;
+                    ">
+
+                    <button type="submit"
+                            class="create-button">
+
+                        ✓ Submit Feedback
+
+                    </button>
+
+
+                    <a asp-controller="Home"
+                       asp-action="ScheduleInterview"
+                       class="btn btn-outline-light">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</div>
