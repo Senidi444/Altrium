@@ -127,31 +127,45 @@ main {
             background: rgba(255, 255, 255, 0.06);
         }
 
-/* Register / Login styled as buttons */
+/* =========================
+   NAV BUTTONS
+   ========================= */
+
+/* Register button */
 .nav-button {
     margin-left: 8px;
     padding: 9px 20px !important;
     border-radius: 9px;
     background: var(--altrium-yellow);
+    border: 1px solid var(--altrium-yellow);
     color: #000 !important;
     font-weight: 700 !important;
+    transition: all 0.25s ease;
 }
 
+
+    /* Register hover */
     .nav-button:hover {
-        background: var(--altrium-yellow-light);
-        color: #000 !important;
+        background: #ffffff;
+        border-color: #ffffff;
+        color: var(--altrium-yellow) !important;
     }
 
-    /* Login as outline instead of solid */
+
+    /* Login + Logout button */
     .nav-button.outline {
         background: transparent;
         border: 1px solid var(--altrium-yellow);
         color: var(--altrium-yellow) !important;
+        transition: all 0.25s ease;
     }
 
+
+        /* Login + Logout hover */
         .nav-button.outline:hover {
-            background: rgba(245, 196, 0, 0.10);
-            color: var(--altrium-yellow-light) !important;
+            background: var(--altrium-yellow);
+            border-color: var(--altrium-yellow);
+            color: #000 !important;
         }
 
 
