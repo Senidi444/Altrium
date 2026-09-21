@@ -4,6 +4,7 @@ using AltriumRecruitmentSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AltriumRecruitmentSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260920100130_AddUserAccountStatus")]
+    partial class AddUserAccountStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,9 +96,6 @@ namespace AltriumRecruitmentSystem.Migrations
                     b.Property<int>("ApplicationId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime?>("FeedbackSubmittedOn")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("GoogleMeetLink")
                         .HasColumnType("nvarchar(max)");
 
@@ -108,17 +108,11 @@ namespace AltriumRecruitmentSystem.Migrations
                     b.Property<string>("InterviewType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("InterviewerFeedback")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("NotifyApplicant")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Outcome")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("ScheduledOn")
                         .HasColumnType("datetime2");
