@@ -1,4 +1,4 @@
-﻿@model AltriumRecruitmentSystem.Models.ScheduleInterviewViewModel
+@model AltriumRecruitmentSystem.Models.ScheduleInterviewViewModel
 
 @{
     ViewData["Title"] = "Schedule Interview";
@@ -11,7 +11,14 @@
         <a asp-controller="Home" asp-action="VacancyManagement" class="sidebar-link">Vacancies</a>
         <a asp-controller="Home" asp-action="ApplicantsManagement" class="sidebar-link">Applications</a>
         <a href="#" class="sidebar-link active">Interviews</a>
-        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+
+        <form asp-controller="Home" asp-action="Logout" method="post">
+            <button type="submit"
+                    class="sidebar-link"
+                    style="background:none; border:0; width:100%; text-align:left;">
+                Logout
+            </button>
+        </form>
     </aside>
 
     <main class="dashboard-main">
@@ -20,21 +27,49 @@
             <h1>Schedule Interview</h1>
         </div>
 
+        @if (TempData["InterviewMessage"] != null)
+        {
+            <div class="alert alert-success" style="margin-bottom:20px;">
+                @TempData["InterviewMessage"]
+            </div>
+        }
+
+        @if (TempData["InterviewError"] != null)
+        {
+            <div class="alert alert-danger" style="margin-bottom:20px;">
+                @TempData["InterviewError"]
+            </div>
+        }
+
+        <!-- ========================= -->
+        <!-- SCHEDULE INTERVIEW FORM -->
+        <!-- ========================= -->
+
         <div class="profile-card" style="max-width:600px;">
 
-            <form asp-controller="Home" asp-action="ScheduleInterview" method="post">
+            <h2 style="margin-bottom:20px;">Schedule New Interview</h2>
+
+            <form asp-controller="Home"
+                  asp-action="ScheduleInterview"
+                  method="post">
 
                 <div class="form-group">
                     <label>Applicant / Vacancy</label>
+
                     <select asp-for="ApplicationId">
+
                         @if (!Model.ApplicationOptions.Any())
                         {
                             <option value="">No shortlisted applicants yet</option>
                         }
+
                         @foreach (var app in Model.ApplicationOptions)
                         {
-                            <option value="@app.ApplicationId">@app.User.FirstName @app.User.LastName — @app.Vacancy.JobTitle</option>
+                            <option value="@app.ApplicationId">
+                                @app.User.FirstName @app.User.LastName — @app.Vacancy.JobTitle
+                            </option>
                         }
+
                     </select>
                 </div>
 
@@ -50,22 +85,254 @@
 
                 <div class="form-group">
                     <label>Google Meet Link</label>
-                    <input asp-for="GoogleMeetLink" placeholder="https://meet.google.com/abc-defg-hij">
+
+                    <input asp-for="GoogleMeetLink"
+                           placeholder="https://meet.google.com/abc-defg-hij">
                 </div>
 
                 <div class="form-group">
                     <label>Message (Optional)</label>
-                    <textarea asp-for="Message" placeholder="Please join the interview on time."></textarea>
+
+                    <textarea asp-for="Message"
+                              placeholder="Please join the interview on time."></textarea>
                 </div>
 
                 <div class="checkbox-row">
-                    <input asp-for="NotifyApplicant" type="checkbox" id="notifyApplicant">
-                    <label for="notifyApplicant">Send Notification to Applicant</label>
+                    <input asp-for="NotifyApplicant"
+                           type="checkbox"
+                           id="notifyApplicant">
+
+                    <label for="notifyApplicant">
+                        Send Notification to Applicant
+                    </label>
                 </div>
 
-                <button type="submit" class="schedule-button">Schedule Interview</button>
+                <button type="submit" class="schedule-button">
+                    Schedule Interview
+                </button>
 
             </form>
+
+        </div>
+
+
+        <!-- ========================= -->
+        <!-- SHORTLISTED APPLICATIONS -->
+        <!-- ========================= -->
+
+        <div style="margin-top:35px;">
+
+            <div class="table-header-row">
+                <h2>Interview Status</h2>
+            </div>
+
+            @if (!Model.ApplicationOptions.Any())
+            {
+                <div class="profile-card">
+                    <p>No shortlisted applicants are currently available for interviews.</p>
+                </div>
+            }
+            else
+            {
+                <div style="display:flex; flex-direction:column; gap:20px;">
+
+                    @foreach (var app in Model.ApplicationOptions)
+                    {
+                        <div class="profile-card">
+
+                            <div style="display:flex;
+                                justify-content:space-between;
+                                align-items:flex-start;
+                                gap:20px;
+                                flex-wrap:wrap;">
+
+                                <div>
+                                    <h3 style="margin-bottom:8px;">
+                                        @app.User.FirstName @app.User.LastName
+                                    </h3>
+
+                                    <p style="margin:0;">
+                                        <strong>Position:</strong>
+                                        @app.Vacancy.JobTitle
+                                    </p>
+
+                                    <p style="margin:5px 0 0;">
+                                        <strong>Application ID:</strong>
+                                        @app.ApplicationId
+                                    </p>
+                                </div>
+
+                                @if (app.Interview != null)
+                                {
+                                    var status = app.Interview.Status.ToString();
+
+                                    if (status == "Scheduled")
+                                    {
+                                        <span style="
+                                            background:#fff3cd;
+                                            color:#856404;
+                                            padding:7px 14px;
+                                            border-radius:20px;
+                                            font-weight:600;">
+                                            Scheduled
+                                        </span>
+                                    }
+                                    else if (status == "Completed")
+                                    {
+                                        <span style="
+                                            background:#d4edda;
+                                            color:#155724;
+                                            padding:7px 14px;
+                                            border-radius:20px;
+                                            font-weight:600;">
+                                            Completed
+                                        </span>
+                                    }
+                                    else if (status == "Cancelled")
+                                    {
+                                        <span style="
+                                            background:#f8d7da;
+                                            color:#721c24;
+                                            padding:7px 14px;
+                                            border-radius:20px;
+                                            font-weight:600;">
+                                            Cancelled
+                                        </span>
+                                    }
+                                    else if (status == "NoShow")
+                                    {
+                                        <span style="
+                                            background:#f8d7da;
+                                            color:#721c24;
+                                            padding:7px 14px;
+                                            border-radius:20px;
+                                            font-weight:600;">
+                                            No Show
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span style="
+                                        background:#e2e3e5;
+                                        color:#383d41;
+                                        padding:7px 14px;
+                                        border-radius:20px;
+                                        font-weight:600;">
+                                        Not Scheduled
+                                    </span>
+                                }
+
+                            </div>
+
+
+                            <!-- INTERVIEW DETAILS -->
+                            @if (app.Interview != null)
+                            {
+                                <div style="
+                                    margin-top:20px;
+                                    padding-top:15px;
+                                    border-top:1px solid rgba(255,255,255,0.1);">
+
+                                    <p>
+                                        <strong>Date:</strong>
+                                        @app.Interview.InterviewDate.ToString("dd MMM yyyy")
+                                    </p>
+
+                                    <p>
+                                        <strong>Time:</strong>
+                                        @app.Interview.InterviewTime.ToString(@"hh\:mm")
+                                    </p>
+
+                                    @if (!string.IsNullOrWhiteSpace(app.Interview.GoogleMeetLink))
+                                    {
+                                        <p>
+                                            <strong>Google Meet:</strong>
+                                            <a href="@app.Interview.GoogleMeetLink"
+                                               target="_blank"
+                                               rel="noopener noreferrer">
+                                                Join Meeting
+                                            </a>
+                                        </p>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(app.Interview.Message))
+                                    {
+                                        <p>
+                                            <strong>Message:</strong>
+                                            @app.Interview.Message
+                                        </p>
+                                    }
+
+                                </div>
+
+
+                                <!-- FEEDBACK INFORMATION -->
+                                @if (app.Interview.Status == AltriumRecruitmentSystem.Models.InterviewStatus.Completed)
+                                {
+                                    <div style="
+                                        margin-top:20px;
+                                        padding:15px;
+                                        border-radius:10px;
+                                        background:rgba(40,167,69,0.08);">
+
+                                        <h4 style="margin-bottom:10px;">
+                                            Interview Feedback
+                                        </h4>
+
+                                        @if (!string.IsNullOrWhiteSpace(app.Interview.Outcome))
+                                        {
+                                            <p>
+                                                <strong>Outcome:</strong>
+                                                @app.Interview.Outcome
+                                            </p>
+                                        }
+
+                                        @if (!string.IsNullOrWhiteSpace(app.Interview.InterviewerFeedback))
+                                        {
+                                            <p>
+                                                <strong>Feedback:</strong>
+                                                @app.Interview.InterviewerFeedback
+                                            </p>
+                                        }
+
+                                        @if (app.Interview.FeedbackSubmittedOn.HasValue)
+                                        {
+                                            <p style="margin-bottom:0;">
+                                                <strong>Submitted:</strong>
+                                                @app.Interview.FeedbackSubmittedOn.Value.ToString("dd MMM yyyy HH:mm")
+                                            </p>
+                                        }
+
+                                    </div>
+                                }
+
+
+                                <!-- GIVE FEEDBACK BUTTON -->
+                                @if (app.Interview.Status == AltriumRecruitmentSystem.Models.InterviewStatus.Scheduled)
+                                {
+                                    <div style="margin-top:20px;">
+
+                                        <a asp-controller="Home"
+                                           asp-action="InterviewFeedback"
+                                           asp-route-id="@app.Interview.InterviewId"
+                                           class="schedule-button"
+                                           style="display:inline-block;
+                                            text-decoration:none;
+                                            text-align:center;">
+                                            Give Interview Feedback
+                                        </a>
+
+                                    </div>
+                                }
+
+                            }
+
+                        </div>
+                    }
+
+                </div>
+            }
 
         </div>
 

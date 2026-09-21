@@ -1,9 +1,17 @@
-﻿@model List<AltriumRecruitmentSystem.Models.JobApplication>
+@model List<AltriumRecruitmentSystem.Models.JobApplication>
 
 @{
     ViewData["Title"] = "Recruiter Dashboard";
+
     var fullName = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value ?? "";
-    var initials = string.Join("", fullName.Split(' ').Where(n => n.Length > 0).Select(n => n[0]));
+
+    var firstName = fullName
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .FirstOrDefault() ?? "";
+
+    var initials = string.Join("", fullName
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Select(n => n[0]));
 
     string StatusClass(AltriumRecruitmentSystem.Models.ApplicationStatus status) => status switch
     {
@@ -13,80 +21,287 @@
         AltriumRecruitmentSystem.Models.ApplicationStatus.Rejected => "status-rejected",
         _ => "status-applied"
     };
+
+    var scheduledInterviews = Model
+        .Where(a => a.Interview != null)
+        .ToList();
 }
 
 <div class="dashboard-layout">
 
     <aside class="dashboard-sidebar">
-        <a href="#" class="sidebar-link active">Dashboard</a>
-        <a asp-controller="Home" asp-action="VacancyManagement" class="sidebar-link">Vacancies</a>
-        <a asp-controller="Home" asp-action="ApplicantsManagement" class="sidebar-link">Applications</a>
-        <a asp-controller="Home" asp-action="ScheduleInterview" class="sidebar-link">Interviews</a>
-        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+
+        <a asp-controller="Home"
+           asp-action="RecruiterDashboard"
+           class="sidebar-link active">
+            Dashboard
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="VacancyManagement"
+           class="sidebar-link">
+            Vacancies
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="ApplicantsManagement"
+           class="sidebar-link">
+            Applications
+        </a>
+
+        <a asp-controller="Home"
+           asp-action="ScheduleInterview"
+           class="sidebar-link">
+            Interviews
+        </a>
+
+        <form asp-controller="Home"
+              asp-action="Logout"
+              method="post">
+
+            <button type="submit"
+                    class="sidebar-link"
+                    style="background:none; border:0; width:100%; text-align:left;">
+
+                Logout
+
+            </button>
+
+        </form>
+
     </aside>
+
 
     <main class="dashboard-main">
 
         <div class="dashboard-welcome">
-            <h1>Welcome, @fullName.Split(' ')[0]!</h1>
+
+            <h1>Welcome, @firstName!</h1>
 
             <div class="dashboard-user">
-                <div class="dashboard-avatar">@initials</div>
+
+                <div class="dashboard-avatar">
+                    @initials
+                </div>
+
                 @fullName · Recruiter
+
             </div>
+
         </div>
+
+
+        <!-- RECRUITER STATISTICS -->
 
         <div class="stats-grid">
+
             <div class="stat-card">
-                <div class="stat-number">@ViewBag.TotalVacancies</div>
-                <div class="stat-label">Total Vacancies</div>
+
+                <div class="stat-number">
+                    @ViewBag.TotalVacancies
+                </div>
+
+                <div class="stat-label">
+                    Total Vacancies
+                </div>
+
             </div>
+
             <div class="stat-card">
-                <div class="stat-number">@ViewBag.TotalApplicants</div>
-                <div class="stat-label">Total Applicants</div>
+
+                <div class="stat-number">
+                    @ViewBag.TotalApplicants
+                </div>
+
+                <div class="stat-label">
+                    Total Applicants
+                </div>
+
             </div>
+
             <div class="stat-card">
-                <div class="stat-number">@ViewBag.NewApplicants</div>
-                <div class="stat-label">New Applicants</div>
+
+                <div class="stat-number">
+                    @ViewBag.NewApplicants
+                </div>
+
+                <div class="stat-label">
+                    New Applicants
+                </div>
+
             </div>
+
             <div class="stat-card">
-                <div class="stat-number">@ViewBag.ShortlistedCount</div>
-                <div class="stat-label">Shortlisted</div>
+
+                <div class="stat-number">
+                    @ViewBag.ShortlistedCount
+                </div>
+
+                <div class="stat-label">
+                    Shortlisted
+                </div>
+
             </div>
+
         </div>
 
+
+        <!-- RECENT APPLICATIONS -->
+
         <div class="dashboard-section">
+
             <h2>Recent Applications</h2>
 
             <table class="dashboard-table">
+
                 <thead>
+
                     <tr>
+
                         <th>Applicant</th>
                         <th>Job Title</th>
                         <th>Applied On</th>
                         <th>Status</th>
+
                     </tr>
+
                 </thead>
+
                 <tbody>
+
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="4" style="color:var(--grey);">No applications yet.</td>
+
+                            <td colspan="4"
+                                style="color:var(--grey);">
+
+                                No applications yet.
+
+                            </td>
+
                         </tr>
                     }
-                    @foreach (var app in Model)
+                    else
                     {
-                        <tr>
-                            <td>@app.User.FirstName @app.User.LastName</td>
-                            <td>@app.Vacancy.JobTitle</td>
-                            <td>@app.AppliedOn.ToString("dd MMM yyyy")</td>
-                            <td><span class="status-pill @StatusClass(app.Status)">@app.Status</span></td>
-                        </tr>
+                        foreach (var app in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @app.User.FirstName @app.User.LastName
+                                </td>
+
+                                <td>
+                                    @app.Vacancy.JobTitle
+                                </td>
+
+                                <td>
+                                    @app.AppliedOn.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+
+                                    <span class="status-pill @StatusClass(app.Status)">
+                                        @app.Status
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        }
                     }
+
                 </tbody>
+
             </table>
 
-            <a asp-controller="Home" asp-action="ApplicantsManagement" class="view-all-button">View All Applicants</a>
+            <a asp-controller="Home"
+               asp-action="ApplicantsManagement"
+               class="view-all-button">
+
+                View All Applicants
+
+            </a>
+
+        </div>
+
+
+        <!-- SCHEDULED INTERVIEWS -->
+
+        <div class="dashboard-section">
+
+            <h2>Scheduled Interviews</h2>
+
+            @if (!scheduledInterviews.Any())
+            {
+                <div class="card p-4">
+
+                    <p style="color:var(--grey); margin-bottom:0;">
+                        No interviews have been scheduled yet.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                foreach (var app in scheduledInterviews)
+                {
+                    <div class="card p-4 mb-3">
+
+                        <h3>
+                            @app.Vacancy.JobTitle
+                        </h3>
+
+                        <p class="mb-1">
+
+                            <strong>Applicant:</strong>
+                            @app.User.FirstName @app.User.LastName
+
+                        </p>
+
+                        <p class="mb-1">
+
+                            <strong>Date:</strong>
+                            @app.Interview!.InterviewDate.ToString("dd MMM yyyy")
+
+                        </p>
+
+                        <p class="mb-1">
+
+                            <strong>Time:</strong>
+                            @app.Interview.InterviewTime
+
+                        </p>
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            app.Interview.Message))
+                        {
+                            <p class="mb-2">
+
+                                <strong>Message:</strong>
+                                @app.Interview.Message
+
+                            </p>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(
+                            app.Interview.GoogleMeetLink))
+                        {
+                            <a href="@app.Interview.GoogleMeetLink"
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="btn btn-warning mt-2">
+
+                                Open Google Meet
+
+                            </a>
+                        }
+
+                    </div>
+                }
+            }
+
         </div>
 
     </main>

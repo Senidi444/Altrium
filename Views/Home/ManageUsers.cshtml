@@ -1,0 +1,313 @@
+﻿@model List<AltriumRecruitmentSystem.Models.User>
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Manage Users</h2>
+
+            <p class="text-muted mb-0">
+                View and manage registered Altrium users.
+            </p>
+        </div>
+
+        <a asp-controller="Home"
+           asp-action="AdminDashboard"
+           class="btn btn-outline-warning">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+
+    @if (TempData["UserManagementMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["UserManagementMessage"]
+        </div>
+    }
+
+
+    @if (TempData["UserManagementError"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["UserManagementError"]
+        </div>
+    }
+
+
+    <!-- SEARCH -->
+
+    <div class="card p-3 mb-4">
+
+        <form asp-controller="Home"
+              asp-action="ManageUsers"
+              method="get">
+
+            <div class="row g-2">
+
+                <div class="col-md-9">
+
+                    <input type="text"
+                           name="search"
+                           value="@ViewBag.Search"
+                           class="form-control"
+                           placeholder="Search by name or email..." />
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <button type="submit"
+                            class="btn btn-warning w-100">
+                        Search
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- USERS TABLE -->
+
+    <div class="card">
+
+        <div class="table-responsive">
+
+            <table class="table table-dark table-hover mb-0">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Name</th>
+
+                        <th>Email</th>
+
+                        <th>Role</th>
+
+                        <th>Registered</th>
+
+                        <th>Status</th>
+
+                        <th>Approval</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+
+                            <td colspan="7"
+                                class="text-center py-4">
+
+                                No users found.
+
+                            </td>
+
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var user in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        @user.FirstName @user.LastName
+                                    </strong>
+                                </td>
+
+                                <td>
+                                    @user.Email
+                                </td>
+
+                                <td>
+
+                                    @if (user.Role ==
+                                         AltriumRecruitmentSystem.Models.UserRole.Recruiter)
+                                    {
+                                        <span class="badge bg-info text-dark">
+                                            Recruiter
+                                        </span>
+                                    }
+                                    else if (user.Role ==
+                                             AltriumRecruitmentSystem.Models.UserRole.Admin)
+                                    {
+                                        <span class="badge bg-danger">
+                                            Admin
+                                        </span>
+                                    }
+                                    else if (user.Role ==
+                                             AltriumRecruitmentSystem.Models.UserRole.Management)
+                                    {
+                                        <span class="badge bg-primary">
+                                            Management
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            Applicant
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    @user.RegisteredOn.ToString("dd MMM yyyy")
+                                </td>
+
+                                <td>
+
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">
+                                            Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            Inactive
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (user.Role ==
+                                         AltriumRecruitmentSystem.Models.UserRole.Recruiter)
+                                    {
+                                        @if (user.IsApproved)
+                                        {
+                                            <span class="badge bg-success">
+                                                Approved
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Pending
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            N/A
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (user.Role ==
+                                         AltriumRecruitmentSystem.Models.UserRole.Admin)
+                                    {
+                                        <span class="text-muted">
+                                            Protected
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex gap-2">
+
+                                            @if (user.IsActive)
+                                            {
+                                                <form asp-controller="Home"
+                                                      asp-action="DeactivateUser"
+                                                      method="post">
+
+                                                    <input type="hidden"
+                                                           name="id"
+                                                           value="@user.UserId" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-danger">
+
+                                                        Deactivate
+
+                                                    </button>
+
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form asp-controller="Home"
+                                                      asp-action="ActivateUser"
+                                                      method="post">
+
+                                                    <input type="hidden"
+                                                           name="id"
+                                                           value="@user.UserId" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-outline-success">
+
+                                                        Activate
+
+                                                    </button>
+
+                                                </form>
+                                            }
+
+
+                                            @if (user.Role ==
+                                                 AltriumRecruitmentSystem.Models.UserRole.Recruiter &&
+                                                 !user.IsApproved)
+                                            {
+                                                <form asp-controller="Home"
+                                                      asp-action="ApproveRecruiter"
+                                                      method="post">
+
+                                                    <input type="hidden"
+                                                           name="id"
+                                                           value="@user.UserId" />
+
+                                                    <button type="submit"
+                                                            class="btn btn-sm btn-warning">
+
+                                                        Approve
+
+                                                    </button>
+
+                                                </form>
+                                            }
+
+                                        </div>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,62 +1,507 @@
-﻿@model List<AltriumRecruitmentSystem.Models.Vacancy>
+@model List<AltriumRecruitmentSystem.Models.Vacancy>
 
 @{
     ViewData["Title"] = "Vacancy Management";
 }
 
+<style>
+
+    /* =========================================
+           VACANCY MANAGEMENT ACTION BUTTONS
+           ========================================= */
+
+    .table-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .vacancy-action-form {
+        margin: 0;
+    }
+
+    .vacancy-action-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-width: 95px;
+        padding: 7px 12px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    /* Close Button */
+
+    .close-btn {
+        background: transparent;
+        border: 1px solid #f0ad00;
+        color: #f0ad00;
+    }
+
+        .close-btn:hover {
+            background: #f0ad00;
+            color: #111;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(240, 173, 0, 0.2);
+        }
+
+
+    /* Reopen Button */
+
+    .reopen-btn {
+        background: transparent;
+        border: 1px solid #198754;
+        color: #4ade80;
+    }
+
+        .reopen-btn:hover {
+            background: #198754;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(25, 135, 84, 0.2);
+        }
+
+
+    /* Delete Button */
+
+    .delete-btn {
+        background: transparent;
+        border: 1px solid #dc3545;
+        color: #ff6b6b;
+    }
+
+        .delete-btn:hover {
+            background: #dc3545;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220, 53, 69, 0.2);
+        }
+
+
+    /* Action Icons */
+
+    .action-icon {
+        font-size: 14px;
+        line-height: 1;
+    }
+
+
+    /* =========================================
+           STATUS BADGES
+           ========================================= */
+
+    .vacancy-status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 82px;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .vacancy-status-open {
+        background: #198754;
+        color: white;
+    }
+
+    .vacancy-status-cancelled {
+        background: #dc3545;
+        color: white;
+    }
+
+
+    /* =========================================
+           MOBILE RESPONSIVENESS
+           ========================================= */
+
+    @@media (max-width: 768px) {
+
+        .table-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .vacancy-action-btn {
+            width: 100%;
+        }
+    }
+
+</style>
+
+
 <div class="dashboard-layout">
 
+    <!-- ================= SIDEBAR ================= -->
+
     <aside class="dashboard-sidebar">
-        <a asp-controller="Home" asp-action="RecruiterDashboard" class="sidebar-link">Dashboard</a>
-        <a href="#" class="sidebar-link active">Vacancies</a>
-        <a asp-controller="Home" asp-action="ApplicantsManagement" class="sidebar-link">Applications</a>
-        <a asp-controller="Home" asp-action="ScheduleInterview" class="sidebar-link">Interviews</a>
-        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+
+        <a asp-controller="Home"
+           asp-action="RecruiterDashboard"
+           class="sidebar-link">
+
+            Dashboard
+
+        </a>
+
+
+        <a asp-controller="Home"
+           asp-action="VacancyManagement"
+           class="sidebar-link active">
+
+            Vacancies
+
+        </a>
+
+
+        <a asp-controller="Home"
+           asp-action="ApplicantsManagement"
+           class="sidebar-link">
+
+            Applications
+
+        </a>
+
+
+        <a asp-controller="Home"
+           asp-action="ScheduleInterview"
+           class="sidebar-link">
+
+            Interviews
+
+        </a>
+
+
+        <form asp-controller="Home"
+              asp-action="Logout"
+              method="post">
+
+            <button type="submit"
+                    class="sidebar-link"
+                    style="
+                background:none;
+                border:0;
+                width:100%;
+                text-align:left;
+                ">
+
+                Logout
+
+            </button>
+
+        </form>
+
     </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
 
     <main class="dashboard-main">
 
+
+        <!-- SUCCESS MESSAGE -->
+        @if (TempData["VacancyMessage"] != null)
+        {
+            <div class="success-banner">
+
+                @TempData["VacancyMessage"]
+
+            </div>
+        }
+
+
+        <!-- ERROR MESSAGE -->
+        @if (TempData["VacancyError"] != null)
+        {
+            <div class="alert alert-danger">
+
+                @TempData["VacancyError"]
+
+            </div>
+        }
+
+
+        <!-- DESCRIPTION -->
+
+        <p style="color:var(--grey);">
+
+            Manage vacancy availability while preserving recruitment history.
+            Vacancies with existing applications are closed or cancelled rather
+            than permanently deleted.
+
+        </p>
+
+
+        <!-- HEADER -->
+
         <div class="table-header-row">
-            <h1>Manage Vacancies</h1>
-            <a asp-controller="Home" asp-action="CreateVacancy" class="create-button">+ Create Vacancy</a>
+
+            <h1>
+
+                Manage Vacancies
+
+            </h1>
+
+
+            <a asp-controller="Home"
+               asp-action="CreateVacancy"
+               class="create-button">
+
+                + Create Vacancy
+
+            </a>
+
         </div>
 
+
+        <!-- ================= VACANCY TABLE ================= -->
+
         <table class="dashboard-table">
+
             <thead>
+
                 <tr>
-                    <th>Job Title</th>
-                    <th>Department</th>
-                    <th>Posted On</th>
-                    <th>Applications</th>
-                    <th>Actions</th>
+
+                    <th>
+                        Job Title
+                    </th>
+
+                    <th>
+                        Department
+                    </th>
+
+                    <th>
+                        Posted On
+                    </th>
+
+                    <th>
+                        Applications
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Actions
+                    </th>
+
                 </tr>
+
             </thead>
+
+
             <tbody>
+
+
                 @if (!Model.Any())
                 {
                     <tr>
-                        <td colspan="5" style="color:var(--grey);">No vacancies created yet.</td>
+
+                        <td colspan="6"
+                            style="color:var(--grey);">
+
+                            No vacancies created yet.
+
+                        </td>
+
                     </tr>
                 }
+
+
                 @foreach (var vacancy in Model)
                 {
                     <tr>
-                        <td>@vacancy.JobTitle</td>
-                        <td>@vacancy.Department</td>
-                        <td>@vacancy.PostedOn.ToString("dd MMM yyyy")</td>
-                        <td>@vacancy.Applications.Count</td>
+
+
+                        <!-- JOB TITLE -->
+
                         <td>
-                            <div class="table-actions">
-                                <form asp-controller="Home" asp-action="DeleteVacancy" method="post">
-                                    <input type="hidden" name="id" value="@vacancy.VacancyId" />
-                                    <button type="submit" class="delete-icon">🗑</button>
-                                </form>
-                            </div>
+
+                            <strong>
+
+                                @vacancy.JobTitle
+
+                            </strong>
+
                         </td>
+
+
+                        <!-- DEPARTMENT -->
+
+                        <td>
+
+                            @vacancy.Department
+
+                        </td>
+
+
+                        <!-- POSTED DATE -->
+
+                        <td>
+
+                            @vacancy.PostedOn.ToString("dd MMM yyyy")
+
+                        </td>
+
+
+                        <!-- APPLICATION COUNT -->
+
+                        <td>
+
+                            @vacancy.Applications.Count
+
+                        </td>
+
+
+                        <!-- STATUS -->
+
+                        <td>
+
+                            @if (vacancy.Status ==
+                                 AltriumRecruitmentSystem.Models.VacancyStatus.Open)
+                            {
+                                <span class="vacancy-status-badge vacancy-status-open">
+
+                                    Open
+
+                                </span>
+                            }
+                            else if (vacancy.Status ==
+                                     AltriumRecruitmentSystem.Models.VacancyStatus.Cancelled)
+                            {
+                                <span class="vacancy-status-badge vacancy-status-cancelled">
+
+                                    Cancelled
+
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="vacancy-status-badge vacancy-status-cancelled">
+
+                                    @vacancy.Status
+
+                                </span>
+                            }
+
+                        </td>
+
+
+                        <!-- ================= ACTIONS ================= -->
+
+                        <td>
+
+                            <div class="table-actions">
+
+
+                                <!-- CLOSE -->
+                                @if (vacancy.Status ==
+                                                                     AltriumRecruitmentSystem.Models.VacancyStatus.Open)
+                                {
+                                    <form asp-controller="Home"
+                                          asp-action="CloseVacancy"
+                                          method="post"
+                                          class="vacancy-action-form">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@vacancy.VacancyId" />
+
+                                        <button type="submit"
+                                                class="vacancy-action-btn close-btn"
+                                                title="Close this vacancy">
+
+                                            <span class="action-icon">
+                                                ⏸
+                                            </span>
+
+                                            Close
+
+                                        </button>
+
+                                    </form>
+                                }
+
+
+                                <!-- REOPEN -->
+                                @if (vacancy.Status !=
+                                                                     AltriumRecruitmentSystem.Models.VacancyStatus.Open)
+                                {
+                                    <form asp-controller="Home"
+                                          asp-action="ReopenVacancy"
+                                          method="post"
+                                          class="vacancy-action-form">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@vacancy.VacancyId" />
+
+                                        <button type="submit"
+                                                class="vacancy-action-btn reopen-btn"
+                                                title="Reopen this vacancy">
+
+                                            <span class="action-icon">
+                                                ↻
+                                            </span>
+
+                                            Reopen
+
+                                        </button>
+
+                                    </form>
+                                }
+
+
+                                <!-- DELETE -->
+                                @if (!vacancy.Applications.Any() &&
+                                                                     vacancy.Status ==
+                                                                     AltriumRecruitmentSystem.Models.VacancyStatus.Open)
+                                {
+                                    <form asp-controller="Home"
+                                          asp-action="DeleteVacancy"
+                                          method="post"
+                                          class="vacancy-action-form">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@vacancy.VacancyId" />
+
+                                        <button type="submit"
+                                                class="vacancy-action-btn delete-btn"
+                                                title="Delete this vacancy">
+
+                                            <span class="action-icon">
+                                                🗑
+                                            </span>
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+                                }
+
+
+                            </div>
+
+                        </td>
+
+
                     </tr>
                 }
+
+
             </tbody>
+
         </table>
+
 
     </main>
 

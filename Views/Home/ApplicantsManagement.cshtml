@@ -1,4 +1,4 @@
-﻿@model AltriumRecruitmentSystem.Models.ApplicantsManagementViewModel
+@model AltriumRecruitmentSystem.Models.ApplicantsManagementViewModel
 
 @{
     ViewData["Title"] = "Applicants Management";
@@ -20,7 +20,7 @@
         <a asp-controller="Home" asp-action="VacancyManagement" class="sidebar-link">Vacancies</a>
         <a href="#" class="sidebar-link active">Applications</a>
         <a asp-controller="Home" asp-action="ScheduleInterview" class="sidebar-link">Interviews</a>
-        <a asp-controller="Home" asp-action="Logout" class="sidebar-link">Logout</a>
+        <form asp-controller="Home" asp-action="Logout" method="post"><button type="submit" class="sidebar-link" style="background:none; border:0; width:100%; text-align:left;">Logout</button></form>
     </aside>
 
     <main class="dashboard-main">
@@ -38,6 +38,7 @@
                 }
             </select>
             <input type="text" name="search" value="@Model.SearchTerm" placeholder="Search by name or email...">
+            <button type="submit" class="apply-button">Filter</button>
         </form>
 
         <table class="dashboard-table">
