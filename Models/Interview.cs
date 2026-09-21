@@ -20,7 +20,9 @@
 
         public string? Stage { get; set; }
         public string? InterviewType { get; set; }
-        public InterviewStatus Status { get; set; } = InterviewStatus.Scheduled;
+
+        public InterviewStatus Status { get; set; } =
+            InterviewStatus.Scheduled;
 
         public string? GoogleMeetLink { get; set; }
         public string? Message { get; set; }
@@ -28,5 +30,14 @@
         public bool NotifyApplicant { get; set; } = true;
 
         public DateTime ScheduledOn { get; set; } = DateTime.Now;
+
+
+        // ===================== INTERVIEW FEEDBACK =====================
+
+        public string? Outcome { get; set; }
+
+        public string? InterviewerFeedback { get; set; }
+
+        public DateTime? FeedbackSubmittedOn { get; set; }
     }
 }
